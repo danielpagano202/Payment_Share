@@ -9,3 +9,8 @@
     justify-content: start;
     align-items: center;
 }
+.bar-image{
+    width: 50px;
+    border-radius: 50%;
+    height: 50px;
+}

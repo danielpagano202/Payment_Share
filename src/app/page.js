@@ -43,7 +43,7 @@ let users = [
 
 let exampleRequest = new PaymentRequest(
   users[1],
-  20,
+  40,
   "Bought Uber",
   new Date(2025, 2, 3)
 );
@@ -58,20 +58,41 @@ let exampleOwedRequest = new RequestWithUsersToDo(
 
 let secondRequest = new RequestWithUsersToDo(
   new PaymentRequest(
-    users[3], 10, "Got food", new Date(2025, 3, 4)
+    users[3], 20, "Got food", new Date(2025, 3, 4)
   ),
   [
-    users[0], users[2]
+    users[0], users[2], users[1]
   ]
 )
-
-
 
 let rightSideData = new GroupData(
   [exampleOwedRequest, secondRequest], "Friends"
 );
 
+
+function getAmountOwed(groupData, allUsers){
+  const keyValuePairArray = allUsers.map((key) => [key, 0]);
+  let userTotals = new Map(
+    keyValuePairArray
+  );
+
+  groupData.itemsToBePaid.forEach(paymentRequest => {
+    paymentRequest.usersToPay.forEach(
+      user => {
+        userTotals.set(user, userTotals.get(user) + (paymentRequest.request.amount / (allUsers.length - 1)));
+      }
+    )
+  });
+  console.log(userTotals);
+  console.log(userTotals.entries())
+  return userTotals;
+}
+console.log()
+let graphData = getAmountOwed(rightSideData, users);
+
+
 import AddGroup from "./components/addGroup";
+import { use } from "react";
 export default function Home() {
   return (
     <div className={styles.main}>
@@ -89,26 +110,17 @@ export default function Home() {
           <button>Settings</button>
         </div>
         <div className="graph">
-          <Bar data={{
-            value: 200,
-            owed: 20,
-            user: users[0]
-          }} />
-          <Bar data={{
-            value: 100,
-            owed: 10,
-            user: users[1]
-          }} />
-          <Bar data={{
-            value: 150,
-            owed: 15,
-            user: users[2]
-          }} />
-          <Bar data={{
-            value: 300,
-            owed: 30,
-            user: users[3]
-          }} />
+          {
+            Array.from(graphData.entries()).map(
+              (element) => (
+                <Bar key={element[0].firstName + element[0].lastName + element[0].icon} data={{
+                  value: element[1] * 10,
+                  owed: element[1],
+                  user: element[0]
+                }}/>
+              )
+            )
+          }
         </div>
         <div className="timeline">
           {rightSideData.itemsToBePaid.map(
