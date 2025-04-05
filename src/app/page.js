@@ -35,11 +35,15 @@ let rightSideData = new GroupData(
   [exampleRequest], "Friends"
 )
 
-
+import AddGroup from "./components/addGroup";
 export default function Home() {
   return (
     <div className={styles.main}>
-      <div style={{flexGrow: 1}}>Left Column</div>
+      <div style={{flexGrow: 1}} className="navigation">
+      
+        <AddGroup name = "Bob" />
+      
+        </div> 
       <div className={styles.verticalLine}></div>
       <div style={{flexGrow: 4}}>
         <div className={styles.titleRow}>
@@ -52,6 +56,7 @@ export default function Home() {
 
         </div>
       </div>
+      
     </div>
   );
 }
