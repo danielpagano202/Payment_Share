@@ -7,7 +7,9 @@ function Modal() {
 
   const openModal = () => setIsOpen(true);
   const closeModal = () => setIsOpen(false);
-
+  function print(){
+    console.log("hello");
+  }
   return (
     <div className="modal_parent">
       {/* Button to open the modal */}
@@ -24,12 +26,12 @@ function Modal() {
             </button>
             <h2>Add Group</h2>
             
-            <form action="/action_page.php">
+            <form  action="/action_page.php">
               
               <input type="text" id="fname" name="fname"/><br/><br/>
               <label for="lname">Add Members</label><br/>
               <input type="search" id="lname" name="lname"/><br/><br/>
-              <input type="submit" value="Submit"/>
+              <input type="submit" value="Submit" />
           </form>
 
 
