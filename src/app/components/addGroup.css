@@ -1,4 +1,20 @@
 .group{
-    padding: 5em;
-    background-color: red;
+    display: flex;
+    height: 5em;
+    width: 5em;
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
+  
+    border-radius: 50%;
+    background-color: rgba(226, 220, 220, 0.253);
 }
+
+.userBlock{
+    display: flex;
+    background-color: rgb(248, 245, 245);
+    height: fit-content;
+}
+h3{
+    align-items: center;
+  }
