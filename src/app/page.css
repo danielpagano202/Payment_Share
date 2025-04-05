@@ -1,8 +1,12 @@
 .navigation{
+    display: flex;
+    flex-direction: column;
     flex: 1fr;
     height: 100vh;
-    border-style: solid;
-    border-color: black;
-    background-color: black;
+    width: 50vh;
+    background-color: rgb(158, 153, 153);
+    gap: 10px;
     
   }
+
+ 
