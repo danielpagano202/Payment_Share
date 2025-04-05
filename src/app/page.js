@@ -3,6 +3,11 @@ import styles from "./page.module.css";
 import "./styles.css";
 import Bar from "./components/bar";
 import TimeLineCircle from "./components/timelineCircle";
+import { use } from "react";
+import Group from "./components/group";
+import MainUser from "./components/mainUser"
+import "./page.css"
+import Modal from "./components/modal";
 class User{
   constructor(firstName, lastName, icon){
     this.firstName = firstName;
@@ -87,21 +92,22 @@ function getAmountOwed(groupData, allUsers){
   console.log(userTotals.entries())
   return userTotals;
 }
-console.log()
+
 let graphData = getAmountOwed(rightSideData, users);
 
+export default function Home() {//name of the group, searching for member
 
-import AddGroup from "./components/addGroup";
-import { use } from "react";
-export default function Home() {
   return (
     <div className={styles.main}>
       
+
       <div style={{flexGrow: 1}} className="navigation">
-      
-        {/*<AddGroup name = "Bob" />*/}
-      
-        </div> 
+        <MainUser name = "Morpheus"/>
+        <Modal/>
+        <Group name = "Bob"  />
+        <Group name = "Bob" />
+        <Group name = "Bob" />
+      </div> 
       <div className={styles.verticalLine}></div>
       <div style={{flexGrow: 4}}>
         <div className={styles.titleRow}>
