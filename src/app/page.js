@@ -9,6 +9,11 @@ import Group from "./components/group";
 import MainUser from "./components/mainUser"
 import "./page.css"
 import Modal from "./components/modal";
+import { use } from "react";
+import Group from "./components/group";
+import MainUser from "./components/mainUser"
+import "./page.css"
+import Modal from "./components/modal";
 import React, { useState } from 'react';
 import SettingsModal from "./components/settingsModal";
 import TransactionModal from "./components/transactionModal";
@@ -94,9 +99,8 @@ function getAmountOwed(groupData, allUsers){
   });
   return userTotals;
 }
-
-let graphData = getAmountOwed(rightSideData, users)
-
+console.log()
+let graphData = getAmountOwed(rightSideData, users);
 
 
 export default function Home() {//name of the group, searching for member
