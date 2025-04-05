@@ -1,6 +1,6 @@
 import {React} from "react"
-import "./addGroup.css"
-function AddGroup(props){//props should 
+import "./group.css"
+function Group(props){//props should 
     return(
         <div className="userBlock">
             <div className = "groupImage"></div>
@@ -8,4 +8,4 @@ function AddGroup(props){//props should
         </div>
     )
 }
-export default AddGroup;
+export default Group;
