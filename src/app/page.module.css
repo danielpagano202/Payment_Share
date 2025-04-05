@@ -22,6 +22,5 @@
   width: 2px;
   height: 100vh; /* Adjust the height as needed */
   background-color: black;
-  position: absolute;
-  left: 20%; /* Adjust position as needed */
+  margin: 0 10px;
 }

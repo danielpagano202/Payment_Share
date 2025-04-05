@@ -1,0 +1,11 @@
+.bar-value{
+    background-color: #18FF6D;
+    width: 50px;
+    border-radius: 10px;
+}
+.main-bar{
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+}

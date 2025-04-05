@@ -1,3 +1,23 @@
 .help{
     background-color: blue;
 }
+.graph{
+    margin-top: 50px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: end;
+    background-color: rgb(236, 228, 228);
+    padding: 30px;
+    margin: 30px;
+}
+.timeline{
+    margin-top: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+    background-color: rgb(236, 228, 228);
+    padding: 30px;
+    margin: 30px;
+}

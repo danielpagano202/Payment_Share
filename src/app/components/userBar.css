@@ -1,0 +1,11 @@
+.main-user-bar{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+.user-avatar-bar{
+    width: 50px;
+    border-radius: 50%;
+    height: 50px;
+}
