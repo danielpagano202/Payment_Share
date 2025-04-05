@@ -1,6 +1,11 @@
 .main{
   display: flex;
   flex-direction: row;
+  justify-content: start;
+}
+.titleRow{
+  display: flex;
+  flex-direction: row;
   justify-content: space-between;
   
 }
@@ -13,4 +18,11 @@
   border-color: black;
   background-color: black;
   
+}
+.verticalLine {
+  width: 2px;
+  height: 200vh; /* Adjust the height as needed */
+  background-color: black;
+  margin: 0 10px;
+  position: sticky;
 }
