@@ -35,10 +35,10 @@ class GroupData{
 }
 
 let users = [
-  new User("Aiden", "A", "https://api.dicebear.com/9.x/adventurer/svg?seed=Aiden"),
-  new User("Chris", "C", "https://api.dicebear.com/9.x/adventurer/svg?seed=Christopher"),
-  new User("Liam", "L", "https://api.dicebear.com/9.x/adventurer/svg?seed=Liam"),
-  new User("Robert", "R", "https://api.dicebear.com/9.x/adventurer/svg?seed=Robert")
+  new User("Aiden", "A", "https://api.dicebear.com/9.x/fun-emoji/svg?seed=Aiden"),
+  new User("Chris", "C", "https://api.dicebear.com/9.x/fun-emoji/svg?seed=Christopher"),
+  new User("Liam", "L", "https://api.dicebear.com/9.x/fun-emoji/svg?seed=Liam"),
+  new User("Robert", "R", "https://api.dicebear.com/9.x/fun-emoji/svg?seed=Robert")
 ]
 
 let exampleRequest = new PaymentRequest(
