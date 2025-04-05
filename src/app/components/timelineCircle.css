@@ -8,6 +8,9 @@
     border-radius: 50%;
     border: 4px black solid;
     padding: 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 .timeline-details{
     border-left: 3px dashed black;
