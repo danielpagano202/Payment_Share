@@ -1,0 +1,15 @@
+.userProfilePicture{
+    display: flex;
+    height: 5em;
+    width: 5em;
+    background-color: #f7f7f7;
+    border-radius: 50%;
+    border-radius: 50%;
+    gap: 10px;
+}
+
+.mainAccountBlock{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
