@@ -1,0 +1,8 @@
+.navigation{
+    flex: 1fr;
+    height: 100vh;
+    border-style: solid;
+    border-color: black;
+    background-color: black;
+    
+  }
