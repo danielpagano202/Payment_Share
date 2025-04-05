@@ -1,6 +1,3 @@
-.help{
-    background-color: blue;
-}
 .graph{
     margin-top: 50px;
     display: flex;
@@ -19,4 +16,17 @@
     
     padding: 30px;
     margin: 30px;
+}
+.group-title{
+    font-size: 64px;
+}
+.modal-button{
+    background: none;
+    box-shadow: none;
+    border: none;
+}
+.scroll-section {
+    width: 50%; /* Adjust width of each section */
+    height: 100vh; /* Set fixed height for scrolling effect */
+    overflow-y: auto; /* Enables vertical scrolling */
 }
