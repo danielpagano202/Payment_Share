@@ -1,5 +1,17 @@
 .main{
   display: flex;
   flex-direction: row;
+  justify-content: start;
+}
+.titleRow{
+  display: flex;
+  flex-direction: row;
   justify-content: space-between;
+}
+.verticalLine {
+  width: 2px;
+  height: 100vh; /* Adjust the height as needed */
+  background-color: black;
+  position: absolute;
+  left: 20%; /* Adjust position as needed */
 }
