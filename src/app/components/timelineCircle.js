@@ -15,6 +15,7 @@ export default function TimeLineCircle(props) {
     return <div className="main-circle-group">
         <div className="timeline-title-row">
             <div className="timeline-circle">
+                <img className="timeline-avatar" src={props.data.request.request.user.icon} />
             </div>
             <div className="timeline-title">
                 <p className="date-title">{formatDate(props.data.request.request.date)}</p>
@@ -27,7 +28,7 @@ export default function TimeLineCircle(props) {
             <ul>
                 {props.data.request.usersToPay.map(
                     (user) => (
-                        <UserBar data={{
+                        <UserBar key={user.firstName + user.lastName} data={{
                             user: user
                         }}/>
                     )

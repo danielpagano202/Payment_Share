@@ -33,12 +33,6 @@ class GroupData{
     this.name = name;
   }
 }
-let exampleRequest = new PaymentRequest(
-  new User("Daniel", "Pagano", ""),
-  20,
-  "Bought Uber",
-  new Date(2025, 2, 3)
-);
 
 let users = [
   new User("Aiden", "A", "https://api.dicebear.com/9.x/adventurer/svg?seed=Aiden"),
@@ -47,16 +41,34 @@ let users = [
   new User("Robert", "R", "https://api.dicebear.com/9.x/adventurer/svg?seed=Robert")
 ]
 
-let exampleOwedRequest = new RequestWithUsersToDo(
-  exampleRequest, [
-    users[1]
-  ]
+let exampleRequest = new PaymentRequest(
+  users[1],
+  20,
+  "Bought Uber",
+  new Date(2025, 2, 3)
 );
 
 
 
+let exampleOwedRequest = new RequestWithUsersToDo(
+  exampleRequest, [
+    users[1], users[3]
+  ]
+);
+
+let secondRequest = new RequestWithUsersToDo(
+  new PaymentRequest(
+    users[3], 10, "Got food", new Date(2025, 3, 4)
+  ),
+  [
+    users[0], users[2]
+  ]
+)
+
+
+
 let rightSideData = new GroupData(
-  [exampleRequest], "Friends"
+  [exampleOwedRequest, secondRequest], "Friends"
 );
 
 import AddGroup from "./components/addGroup";
@@ -99,15 +111,15 @@ export default function Home() {
           }} />
         </div>
         <div className="timeline">
-          <TimeLineCircle data={{
-            request: exampleOwedRequest,
-            users: users
-          }}/>
-          <TimeLineCircle data={{
-            request: exampleOwedRequest,
-            users: users
-          }}/>
-          <div className="timeline-circle">
+          {rightSideData.itemsToBePaid.map(
+            (request) => (
+              <TimeLineCircle key={request.request.note + request.request.user.firstName + request.request.date.toString} data={{
+                request: request,
+                users: users
+              }}/>
+            )
+          )}
+          <div className="timeline-circle" style={{padding: "25px"}}>
           </div>
         </div>
       </div>

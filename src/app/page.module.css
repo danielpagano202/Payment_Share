@@ -20,7 +20,8 @@
 }
 .verticalLine {
   width: 2px;
-  height: 100vh; /* Adjust the height as needed */
+  height: 200vh; /* Adjust the height as needed */
   background-color: black;
   margin: 0 10px;
+  position: sticky;
 }
