@@ -3,9 +3,14 @@ import React, { useEffect, useState } from 'react';
 import "./bar.css";
 
 export default function Bar(props) {
-  const [height, setHeight] = useState(props.data.value);
+  const [height, setHeight] = useState(0);
 
-  
+  const targetHeight = props.data.value; 
+    setTimeout(
+        () => {
+            setHeight(targetHeight);
+        }, 100
+    );
 
   return (
     <div className="main-bar">

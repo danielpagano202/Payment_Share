@@ -57,13 +57,15 @@ function TransactionModal(props) {
         date: new Date(newRequest.date),
       },
     };
-    
-    // Call the onRequest function passed via props
-    props.data.onRequest(newReq);
+    if(newRequest.amount != "" && newRequest.date != ""){
+      // Call the onRequest function passed via props
+      props.data.onRequest(newReq);
 
-    // Reset the form after adding the request
-    setNewRequest({ amount: "", note: "", date: "" });
-    closeModal(); // Close the modal
+      // Reset the form after adding the request
+      setNewRequest({ amount: "", note: "", date: "" });
+      closeModal(); // Close the modal
+    }
+    
   };
 
   return (
@@ -127,16 +129,18 @@ function TransactionModal(props) {
             {!isPaying && (
               <div className="request-form">
                 <label>
-                  Amount:
+                  Amount:  
                   <input
                     type="number"
                     name="amount"
+                    className="text-field-request"
                     value={newRequest.amount}
                     onChange={handleInputChange}
                     placeholder="Enter amount"
                     required
                   />
                 </label>
+                <br/>
                 <label>
                   Note:
                   <input
@@ -145,9 +149,11 @@ function TransactionModal(props) {
                     value={newRequest.note}
                     onChange={handleInputChange}
                     placeholder="Enter note"
+                    className="text-field-request"
                     required
                   />
                 </label>
+                <br/>
                 <label>
                   Date:
                   <input
@@ -155,6 +161,7 @@ function TransactionModal(props) {
                     name="date"
                     value={newRequest.date}
                     onChange={handleInputChange}
+                    className="calendar-request"
                     required
                   />
                 </label>
