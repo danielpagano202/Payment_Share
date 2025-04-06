@@ -3,28 +3,27 @@
 import Image from "next/image";
 
 import styles from "./page.module.css";
+import React, { useState, useEffect } from 'react';
 import "./styles.css";
 import Bar from "./components/bar";
 import TimeLineCircle from "./components/timelineCircle";
-import { use } from "react";
 import Group from "./components/group";
 import MainUser from "./components/mainUser";
 import "./page.css";
 import Modal from "./components/modal";
-
-
-
-
-
-
-import { useState } from "react";
 import SettingsModal from "./components/settingsModal";
 import TransactionModal from "./components/transactionModal";
-class User{
-  constructor(firstName, lastName, icon){
+import PocketBase from 'pocketbase';
+
+const pb = new PocketBase('http://127.0.0.1:8090');
+
+// Define Classes
+class User {
+  constructor(firstName, lastName, icon, id = "") {
     this.firstName = firstName;
     this.lastName = lastName;
     this.icon = icon;
+    this.id = id;
   }
 }
 
@@ -38,106 +37,91 @@ class PaymentRequest {
 }
 
 class RequestWithUsersToDo {
-  constructor(request, usersToPay) {
+  constructor(request, usersToPay, id = "") {
     this.request = request;
     this.usersToPay = usersToPay;
+    this.id = id;
   }
 }
 
 class GroupData {
-  constructor(itemsToBePaid, name) {
+  constructor(itemsToBePaid, name, id = "") {
     this.itemsToBePaid = itemsToBePaid;
-    this.name = name;//name of group
+    this.name = name;
+    this.id = id;
   }
 }
 
+export default function Home() {
+  const [users, setUsers] = useState([]); // Start with an empty array for users
+  const [rightSideData, setRightSideData] = useState(new GroupData([], "Friends", ""));
+  const [currentUser, setCurrentUser] = useState(null); // Start with null, will set after users are loaded
 
-let users = [
-  new User("Aiden", "A", "https://api.dicebear.com/9.x/thumbs/svg?seed=Aiden"),
-  new User("Chris", "C", "https://api.dicebear.com/9.x/thumbs/svg?seed=Christopher"),
-  new User("Liam", "L", "https://api.dicebear.com/9.x/thumbs/svg?seed=Liam"),
-  new User("Robert", "R", "https://api.dicebear.com/9.x/thumbs/svg?seed=Robert")
-]
+  const groupName = "Friends"; // Hardcoded group name
 
+  // Fetch the data from PocketBase and update the users state
+  async function updateRightSideData(groupToFind) {
+    const resultList = await pb.collection('Groups').getList(1, 50, {
+      filter: `name = "${groupToFind}"`,
+      expand: "users, transactions"
+    });
 
-let exampleRequest = new PaymentRequest(
-  users[1],
-  40,
-  "Bought Uber",
-  new Date(2025, 2, 3)
-);
+    // Map the users into state
+    const updatedUsers = Array.from(resultList.items[0].expand.users).map(value => {
+      return new User(value.firstName, value.lastName, value.icon, value.id);
+    });
 
-let exampleOwedRequest = new RequestWithUsersToDo(exampleRequest, [
-  users[1],
-  users[3],
-]);
+    // Set users and set the currentUser
+    setUsers(updatedUsers);
+    setCurrentUser(updatedUsers[0]); // Set the first user as currentUser
 
-let secondRequest = new RequestWithUsersToDo(
-  new PaymentRequest(users[3], 20, "Got food", new Date(2025, 3, 4)),
-  [users[0], users[2], users[1]]
-);
+    // Create a map from users by their ids
+    const usersMap = new Map(updatedUsers.map(user => [user.id, user]));
 
-/**
- * RequestWithUsersToDo
- * 
- */
-let rightSideData = new GroupData(
-  [exampleOwedRequest, secondRequest],//first is the one who owed, second 
-  "Friends"
-);
-
-function getAmountOwed(groupData, allUsers) {
-  const keyValuePairArray = allUsers.map((key) => [key, 0]);
-  let userTotals = new Map(keyValuePairArray);
-
-  groupData.itemsToBePaid.forEach((paymentRequest) => {
-    paymentRequest.usersToPay.forEach((user) => {
-      userTotals.set(
-        user,
-        userTotals.get(user) +
-          paymentRequest.request.amount / (allUsers.length - 1)
+    // Map transactions
+    let transactions = Array.from(resultList.items[0].expand.transactions).map(value => {
+      return new RequestWithUsersToDo(
+        new PaymentRequest(
+          usersMap.get(value.user),
+          value.amount,
+          value.note,
+          new Date(value.date)
+        ),
+        Array.from(value.usersToPay).map(user => usersMap.get(user)),
+        value.id
       );
     });
-  });
 
-  console.log(userTotals);
-  console.log(userTotals.entries());
+    // Sort transactions by date
+    transactions = transactions.sort((a, b) => new Date(b.request.date) - new Date(a.request.date));
 
-  return userTotals;
-}
-console.log()
-let graphData = getAmountOwed(rightSideData, users);
+    // Set the right-side data with new transactions
+    setRightSideData(new GroupData(transactions, "Friends", resultList.items[0].id));
+  }
 
-const changeGroup = () => {
-  
-  
-};
+  useEffect(() => {
+    updateRightSideData(groupName);
+  }, []); // Empty dependency ensures this runs only once
 
+  function getAmountOwed(groupData, allUsers) {
+    const keyValuePairArray = allUsers.map(key => [key, 0]);
+    let userTotals = new Map(keyValuePairArray);
 
-export default function Home() {//name of the group, searching for member
-  const [groupName, setGroupName] = useState("");
-  const [groupMembers, setGroupMembers] = useState();
-  const [groupsInfo, setGroupsInfo] = useState([]); //[[groupName, [member1, member2,...]]  ,...]
-  
-  
-  const postSubmitAction = (groupName, members) => {
-    // console.log("hello from parent");
+    groupData.itemsToBePaid.forEach(paymentRequest => {
+      paymentRequest.usersToPay.forEach(user => {
+        userTotals.set(user, userTotals.get(user) + paymentRequest.request.amount / (allUsers.length - 1));
+      });
+    });
 
-    const newGroup = new GroupData([],groupName)
-    setGroupName(groupName);
-    setGroupMembers(members);
-    console.log("here:", newGroup)
-    setGroupsInfo((prevGroups) => [...prevGroups, {
-      groupData: newGroup,
-      members: members
-    }]);
-    console.log(newGroup)
-  };
- 
+    return userTotals;
+  }
+
+  const graphData = getAmountOwed(rightSideData, users);
+  const minHeight = 10 * Math.max(...Array.from(graphData.values())) + 105;
+
   return (
     <div className={styles.main}>
-
-      <div style={{ flexGrow: 1 }} className="navigation">
+      <div style={{ flexGrow: 1 }} className="navigation scroll-section">
         <MainUser name="Morpheus" />
         <Modal afterSubmit={postSubmitAction} />
 
@@ -154,48 +138,49 @@ export default function Home() {//name of the group, searching for member
         
       </div>
       <div className={styles.verticalLine}></div>
-      <div style={{ flexGrow: 4 }}>
-
+      <div style={{ flexGrow: 4 }} className="scroll-section">
         <div className={styles.titleRow}>
-          <TransactionModal data={{
-            requests: rightSideData.itemsToBePaid,
-            onPay: (passedRequests) => {console.log(passedRequests)}
-          }}/>
+          <TransactionModal
+            data={{
+              requests: rightSideData.itemsToBePaid.filter(value => value.usersToPay.includes(currentUser)),
+              onPay: passedRequests => {
+                const batch = pb.createBatch();
+                passedRequests.forEach(request => {
+                  batch.collection("Transactions").update(request.id, {
+                    "usersToPay-": currentUser.id
+                  });
+                });
+                batch.send();
+              },
+              onRequest: async data => {
+                const transactionRecord = await pb.collection("Transactions").create({
+                  note: data.request.note,
+                  amount: data.request.amount,
+                  date: data.request.date,
+                  user: currentUser.id,
+                  usersToPay: users.filter(user => user.id !== currentUser.id).map(user => user.id)
+                });
+
+                pb.collection("Groups").update(rightSideData.id, {
+                  "transactions+": transactionRecord.id
+                });
+              }
+            }}
+          />
           <p className="group-title">{rightSideData.name}</p>
-          <SettingsModal data={{
-            users: users
-          }}/>
+          <SettingsModal data={{ users: [] }} />
         </div>
-
-        <div className="graph" style={{height: 60 * Array.from(graphData.entries()).reduce((min, current) => current[1] < min[1] ? current : min)[1]}}>
-          {
-            Array.from(graphData.entries()).map(
-              (element) => (
-                <Bar key={element[0].firstName + element[0].lastName + element[0].icon} data={{
-                  value: element[1] * 10,
-                  owed: element[1],
-                  user: element[0]
-                }}/>
-              )
-            )
-          }
-
+        <div className="graph" style={{ height: Math.max(minHeight, 400) }}>
+          {Array.from(graphData.entries()).map(([user, owedAmount]) => (
+            <Bar key={user.id} data={{ value: 5 + owedAmount * 5, owed: owedAmount, user }} />
+          ))}
         </div>
         <div className="timeline">
-          {rightSideData.itemsToBePaid.map((request) => (
-            <TimeLineCircle
-              key={
-                request.request.note +
-                request.request.user.firstName +
-                request.request.date.toString
-              }
-              data={{
-                request: request,
-                users: users,
-              }}
-            />
+          {rightSideData.itemsToBePaid.map(request => (
+            <TimeLineCircle key={request.request.note + request.request.user.firstName + request.request.date.toString()} data={{ request, users }} />
           ))}
-          <div className="timeline-circle" style={{ padding: "25px" }}></div>
+          {rightSideData.itemsToBePaid.length === 0 && <div><p className="sectionTitle">No payments made yet!</p></div>}
+
         </div>
       </div>
     </div>

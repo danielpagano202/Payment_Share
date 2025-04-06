@@ -101,13 +101,16 @@
   }
   
   .mode-toggle {
+    padding: 10px 0px;
     display: flex;
     justify-content: center;
+    align-items: center;
     margin-bottom: 20px;
   }
   
   .mode-btn {
-    background-color: #f1f1f1;
+    background-color: #ffffff;
+    color: black;
     padding: 10px;
     margin: 0 10px;
     border: 1px solid #ccc;
@@ -125,7 +128,7 @@
   }
   
   .request-btn {
-    background-color: #f9f9f9;
+    background-color: #ffffff;
     padding: 10px;
     margin: 5px 0;
     border: 1px solid #ccc;
@@ -133,6 +136,7 @@
     cursor: pointer;
     border-radius: 4px;
     text-align: left;
+    color: black
   }
   
   .request-btn.selected {
@@ -163,4 +167,16 @@
     height: 100%;
     cursor: pointer;
   }
-  
+  .text-field-request{
+    background-color: #ffffff;
+    border-radius: 20px;
+    padding: 2px 5px;
+    margin: 5px 5px
+  }
+  .calendar-request{
+    background-color: #ffffff;
+    color: black;
+    border-radius: 20px;
+    padding: 2px 5px;
+    margin: 5px 5px
+  }

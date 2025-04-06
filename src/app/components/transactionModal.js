@@ -6,17 +6,23 @@ function TransactionModal(props) {
   const [isOpen, setIsOpen] = useState(false);
   const [isPaying, setIsPaying] = useState(true); // default to "Pay"
   const [selectedRequests, setSelectedRequests] = useState([]);
+  const [newRequest, setNewRequest] = useState({
+    amount: "",
+    note: "",
+    date: "",
+  });
 
   const openModal = () => setIsOpen(true);
   const closeModal = () => setIsOpen(false);
 
-  // Toggle between Pay and Request
+  // Toggle between Pay and Request modes
   const handleModeSwitch = (mode) => {
     setIsPaying(mode === "pay");
     setSelectedRequests([]); // Clear selected requests when changing mode
+    setNewRequest({ amount: "", note: "", date: "" }); // Reset the new request form
   };
 
-  // Handle selecting or deselecting requests
+  // Handle selecting or deselecting requests in Pay mode
   const handleRequestSelect = (request) => {
     setSelectedRequests((prevSelected) =>
       prevSelected.includes(request)
@@ -27,10 +33,39 @@ function TransactionModal(props) {
 
   // Handle Pay button click
   const handlePay = () => {
-    // Call the function passed from props to handle the payment
     props.data.onPay(selectedRequests);
-    setSelectedRequests([]);
-    closeModal(); // Reset after payment
+    setSelectedRequests([]); // Reset selected requests after payment
+    closeModal(); // Close modal after payment
+  };
+
+  // Handle input changes for new request
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewRequest((prevRequest) => ({
+      ...prevRequest,
+      [name]: value,
+    }));
+  };
+
+  // Handle Request button click
+  const handleRequest = () => {
+    // Create the new request object
+    const newReq = {
+      request: {
+        amount: parseFloat(newRequest.amount),
+        note: newRequest.note,
+        date: new Date(newRequest.date),
+      },
+    };
+    if(newRequest.amount != "" && newRequest.date != ""){
+      // Call the onRequest function passed via props
+      props.data.onRequest(newReq);
+
+      // Reset the form after adding the request
+      setNewRequest({ amount: "", note: "", date: "" });
+      closeModal(); // Close the modal
+    }
+    
   };
 
   return (
@@ -90,11 +125,49 @@ function TransactionModal(props) {
               </div>
             )}
 
-            {/* Request Mode (for now, just a placeholder) */}
+            {/* Request Mode: Form to Add a Request */}
             {!isPaying && (
-              <div className="requests-list">
-                {/* Placeholder content for Request mode */}
-                <p>Request functionality can be added here!</p>
+              <div className="request-form">
+                <label>
+                  Amount:  
+                  <input
+                    type="number"
+                    name="amount"
+                    className="text-field-request"
+                    value={newRequest.amount}
+                    onChange={handleInputChange}
+                    placeholder="Enter amount"
+                    required
+                  />
+                </label>
+                <br/>
+                <label>
+                  Note:
+                  <input
+                    type="text"
+                    name="note"
+                    value={newRequest.note}
+                    onChange={handleInputChange}
+                    placeholder="Enter note"
+                    className="text-field-request"
+                    required
+                  />
+                </label>
+                <br/>
+                <label>
+                  Date:
+                  <input
+                    type="date"
+                    name="date"
+                    value={newRequest.date}
+                    onChange={handleInputChange}
+                    className="calendar-request"
+                    required
+                  />
+                </label>
+                <button className="request-btn" onClick={handleRequest}>
+                  Add Request
+                </button>
               </div>
             )}
 

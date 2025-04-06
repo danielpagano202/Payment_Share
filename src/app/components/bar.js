@@ -1,3 +1,4 @@
+"use client"
 import React, { useEffect, useState } from 'react';
 import "./bar.css";
 
@@ -17,7 +18,6 @@ export default function Bar(props) {
 //         }, 100
 //     )
 //   }, [props.data.value]);
-
   return (
     <div className="main-bar">
       <div 
