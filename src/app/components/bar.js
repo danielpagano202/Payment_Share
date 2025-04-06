@@ -4,14 +4,20 @@ import "./bar.css";
 
 export default function Bar(props) {
   const [height, setHeight] = useState(0);
-
   const targetHeight = props.data.value; 
-    setTimeout(
-        () => {
-            setHeight(targetHeight);
-        }, 100
-    );
-
+      setTimeout(
+          () => {
+              setHeight(targetHeight);
+          }, 100
+      )
+//   useEffect(() => {
+//     const targetHeight = props.data.value; 
+//     setTimeout(
+//         () => {
+//             setHeight(targetHeight);
+//         }, 100
+//     )
+//   }, [props.data.value]);
   return (
     <div className="main-bar">
       <div 

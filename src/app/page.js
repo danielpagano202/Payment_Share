@@ -1,5 +1,7 @@
 "use client"
+
 import Image from "next/image";
+
 import styles from "./page.module.css";
 import React, { useState, useEffect } from 'react';
 import "./styles.css";
@@ -120,11 +122,20 @@ export default function Home() {
   return (
     <div className={styles.main}>
       <div style={{ flexGrow: 1 }} className="navigation scroll-section">
-        <MainUser name={currentUser ? currentUser.firstName : "Loading..."} />
-        <Modal />
-        {[...Array(9)].map((_, i) => (
-          <Group key={i} name="Bob" />
+        <MainUser name="Morpheus" />
+        <Modal afterSubmit={postSubmitAction} />
+
+        {groupsInfo.map((groupObj, index) => (
+          
+          <Group
+            key={index} 
+            name={groupObj.groupData.name}
+            members={groupObj.members}
+            click ={changeGroup}
+          />
+
         ))}
+        
       </div>
       <div className={styles.verticalLine}></div>
       <div style={{ flexGrow: 4 }} className="scroll-section">
@@ -169,6 +180,7 @@ export default function Home() {
             <TimeLineCircle key={request.request.note + request.request.user.firstName + request.request.date.toString()} data={{ request, users }} />
           ))}
           {rightSideData.itemsToBePaid.length === 0 && <div><p className="sectionTitle">No payments made yet!</p></div>}
+
         </div>
       </div>
     </div>

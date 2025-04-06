@@ -2,14 +2,18 @@
     display: flex;
     height: 5em;
     width: 5em;
-    background-color: #f7f7f7;
+    background-color: #363030;
     border-radius: 50%;
     border-radius: 50%;
     gap: 10px;
+    background-image: url("https://api.dicebear.com/9.x/thumbs/svg?seed=Morpheus");
 }
 
 .mainAccountBlock{
     display: flex;
     align-items: center;
     gap: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: #fffefe;
 }
