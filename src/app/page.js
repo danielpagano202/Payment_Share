@@ -13,7 +13,7 @@ import SettingsModal from "./components/settingsModal";
 import TransactionModal from "./components/transactionModal";
 import SignInModal from "./components/signin";
 import PocketBase from 'pocketbase';
-
+import Cookies from "js-cookie";
 const pb = new PocketBase('http://127.0.0.1:8090');
 
 // Define Classes
@@ -143,6 +143,9 @@ export default function Home() {
       return;
     }
 
+    Cookies.set("username", username);
+    Cookies.set("password", password);
+
     let userFirstName = authData.record.firstName;
     let userLastName = authData.record.lastName;
     let userIcon = authData.record.icon;
@@ -174,19 +177,23 @@ export default function Home() {
         }
       }
     ));
-
   }
 
   const graphData = getAmountOwed(rightSideData, users);
   const minHeight = 8 * Math.max(...Array.from(graphData.values())) + 105;
 
+  const savedUsername = Cookies.get('username');
+  const savedPassword = Cookies.get('password');
 
+  if(savedUsername != undefined && savedPassword != undefined && currentUser == null){
+    signIn(savedUsername, savedPassword);
+  }
   return (
     <div className={styles.main}>
       <div style={{ flexGrow: 1 }} className="navigation scroll-section">
         
         <MainUser name={currentUser != null ? currentUser.firstName : "Sign In"} avatar={currentUser != null ? currentUser.icon : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"}/>
-        <div style={{display: "flex", justifyContent: "space-between"}}>
+        <div style={{display: "flex", justifyContent: "space-between"}} className="animate__animated animate__bounce">
           <SignInModal onSubmit={
             (signInData) => {
                 signIn(signInData.email, signInData.password);
