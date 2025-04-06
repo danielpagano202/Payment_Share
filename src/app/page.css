@@ -2,7 +2,6 @@
     display: flex;
     flex-direction: column;
     flex: 1fr;
-    height: fit-content;
     padding: 0px;
     width: 50vh;
     background-color: rgb(243, 243, 243);

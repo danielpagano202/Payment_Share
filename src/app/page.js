@@ -1,7 +1,5 @@
 "use client"
-
 import Image from "next/image";
-
 import styles from "./page.module.css";
 import React, { useState, useEffect } from 'react';
 import "./styles.css";
@@ -13,6 +11,7 @@ import "./page.css";
 import Modal from "./components/modal";
 import SettingsModal from "./components/settingsModal";
 import TransactionModal from "./components/transactionModal";
+
 import PocketBase from 'pocketbase';
 
 const pb = new PocketBase('http://127.0.0.1:8090');
@@ -53,6 +52,24 @@ class GroupData {
 }
 
 export default function Home() {
+  const [groupTabName, setGroupTabName] = useState("");
+  const [groupMembers, setGroupMembers] = useState();
+  const [groupsInfo, setGroupsInfo] = useState([]); //[[groupName, [member1, member2,...]]  ,...]
+
+  const postSubmitAction = (groupTabName, members) => {
+    // console.log("hello from parent");
+
+    const newGroup = new GroupData([],groupTabName)
+    setGroupTabName(groupTabName);
+    setGroupMembers(members);
+    console.log("here:", newGroup)
+    setGroupsInfo((prevGroups) => [...prevGroups, {
+      groupData: newGroup,
+      members: members
+    }]);
+    console.log(newGroup)
+  };
+
   const [users, setUsers] = useState([]); // Start with an empty array for users
   const [rightSideData, setRightSideData] = useState(new GroupData([], "Friends", ""));
   const [currentUser, setCurrentUser] = useState(null); // Start with null, will set after users are loaded
@@ -114,10 +131,23 @@ export default function Home() {
     });
 
     return userTotals;
+
+
+
+
+
+
+
   }
+
 
   const graphData = getAmountOwed(rightSideData, users);
   const minHeight = 10 * Math.max(...Array.from(graphData.values())) + 105;
+
+
+
+
+
 
   return (
     <div className={styles.main}>
@@ -126,17 +156,17 @@ export default function Home() {
         <Modal afterSubmit={postSubmitAction} />
 
         {groupsInfo.map((groupObj, index) => (
-          
+
           <Group
             key={index} 
             name={groupObj.groupData.name}
             members={groupObj.members}
-            click ={changeGroup}
           />
 
         ))}
-        
+
       </div>
+
       <div className={styles.verticalLine}></div>
       <div style={{ flexGrow: 4 }} className="scroll-section">
         <div className={styles.titleRow}>
@@ -167,13 +197,37 @@ export default function Home() {
               }
             }}
           />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
           <p className="group-title">{rightSideData.name}</p>
           <SettingsModal data={{ users: [] }} />
+
+
         </div>
         <div className="graph" style={{ height: Math.max(minHeight, 400) }}>
           {Array.from(graphData.entries()).map(([user, owedAmount]) => (
             <Bar key={user.id} data={{ value: 5 + owedAmount * 5, owed: owedAmount, user }} />
           ))}
+
+
+
+
+
+
+
+
         </div>
         <div className="timeline">
           {rightSideData.itemsToBePaid.map(request => (
@@ -181,8 +235,22 @@ export default function Home() {
           ))}
           {rightSideData.itemsToBePaid.length === 0 && <div><p className="sectionTitle">No payments made yet!</p></div>}
 
+
+
+
+
+
+
+
+
+
+
+
+
+
         </div>
       </div>
+
     </div>
   );
 }
