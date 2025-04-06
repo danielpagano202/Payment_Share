@@ -1,21 +1,36 @@
-"use client"
-import { useState } from "react";
+"use client";
+import { useState, useRef } from "react";
 import styles from "./Modal.module.css";
 
-function Modal() {
+function Modal({afterSubmit }) {
   const [isOpen, setIsOpen] = useState(false);
-
   const openModal = () => setIsOpen(true);
   const closeModal = () => setIsOpen(false);
 
+  const groupNameRef = useRef();
+  const membersRef = useRef();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const groupName = groupNameRef.current.value;
+    const members = membersRef.current.value;//in form : bb,as,cs
+
+    
+    const membersArray = members.split(",");
+
+    afterSubmit(groupName,membersArray);
+ 
+  };
+
+  
+
   return (
     <div className="modal_parent">
-      {/* Button to open the modal */}
       <button className={styles.openButton} onClick={openModal}>
         +
       </button>
 
-      {/* Modal */}
       {isOpen && (
         <div className={styles.overlay}>
           <div className={styles.modal}>
@@ -23,22 +38,34 @@ function Modal() {
               &times;
             </button>
             <h2>Add Group</h2>
-            
-            <form action="/action_page.php">
-              
-              <input type="text" id="fname" name="fname"/><br/><br/>
-              <label for="lname">Add Members</label><br/>
-              <input type="search" id="lname" name="lname"/><br/><br/>
-              <input type="submit" value="Submit"/>
-          </form>
 
+            <form onSubmit={handleSubmit} action="/action_page.php">
+              <input type="text" id="gname" name="gname" ref={groupNameRef} required/>
+              <br />
+              <br />
+              <label for="lname">Add Members</label>
+              <br />
+              <input
+                type="search"
+                id="members"
+                name="members"
+                ref={membersRef}
+                required
+              />
+              <br />
+              <br />
 
-
+              <input
+                type="submit"
+                
+                value="Submit"
+              />
+            </form>
           </div>
         </div>
       )}
     </div>
   );
-};
+}
 
 export default Modal;
