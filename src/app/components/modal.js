@@ -12,6 +12,7 @@ function Modal({afterSubmit }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    closeModal();
 
     const groupName = groupNameRef.current.value;
     const members = membersRef.current.value;//in form : bb,as,cs
