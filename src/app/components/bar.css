@@ -2,12 +2,15 @@
     background-color: #18FF6D;
     width: 70px;
     border-radius: 10px;
+    height: 0px;
+    transition: height 1s;
 }
 .main-bar{
     display: flex;
     flex-direction: column;
     justify-content: start;
     align-items: center;
+    gap: 10px;
 }
 .bar-image{
     width: 50px;

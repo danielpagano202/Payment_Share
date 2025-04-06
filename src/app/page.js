@@ -1,4 +1,5 @@
-"use client";
+"use client"
+
 import Image from "next/image";
 import { useState } from "react";
 import styles from "./page.module.css";
@@ -11,8 +12,16 @@ import MainUser from "./components/mainUser";
 import "./page.css";
 import Modal from "./components/modal";
 
-class User {
-  constructor(firstName, lastName, icon) {
+import { use } from "react";
+import Group from "./components/group";
+import MainUser from "./components/mainUser"
+import "./page.css"
+import Modal from "./components/modal";
+import React, { useState } from 'react';
+import SettingsModal from "./components/settingsModal";
+import TransactionModal from "./components/transactionModal";
+class User{
+  constructor(firstName, lastName, icon){
     this.firstName = firstName;
     this.lastName = lastName;
     this.icon = icon;
@@ -43,23 +52,12 @@ class GroupData {
 }
 
 let users = [
-  new User(
-    "Aiden",
-    "A",
-    "https://api.dicebear.com/9.x/fun-emoji/svg?seed=Aiden"
-  ),
-  new User(
-    "Chris",
-    "C",
-    "https://api.dicebear.com/9.x/fun-emoji/svg?seed=Christopher"
-  ),
-  new User("Liam", "L", "https://api.dicebear.com/9.x/fun-emoji/svg?seed=Liam"),
-  new User(
-    "Robert",
-    "R",
-    "https://api.dicebear.com/9.x/fun-emoji/svg?seed=Robert"
-  ),
-];
+  new User("Aiden", "A", "https://api.dicebear.com/9.x/thumbs/svg?seed=Aiden"),
+  new User("Chris", "C", "https://api.dicebear.com/9.x/thumbs/svg?seed=Christopher"),
+  new User("Liam", "L", "https://api.dicebear.com/9.x/thumbs/svg?seed=Liam"),
+  new User("Robert", "R", "https://api.dicebear.com/9.x/thumbs/svg?seed=Robert")
+]
+
 
 let exampleRequest = new PaymentRequest(
   users[1],
@@ -96,12 +94,15 @@ function getAmountOwed(groupData, allUsers) {
       );
     });
   });
+
   console.log(userTotals);
   console.log(userTotals.entries());
+
   return userTotals;
 }
-
+console.log()
 let graphData = getAmountOwed(rightSideData, users);
+
 
 export default function Home() {
   const [groupName, setGroupName] = useState("");
@@ -121,8 +122,11 @@ export default function Home() {
     });
   };
 
+
+export default function Home() {//name of the group, searching for member
   return (
     <div className={styles.main}>
+
       <div style={{ flexGrow: 1 }} className="navigation">
         <MainUser name="Morpheus" />
         <Modal afterSubmit={postSubmitAction} />
@@ -138,22 +142,31 @@ export default function Home() {
       </div>
       <div className={styles.verticalLine}></div>
       <div style={{ flexGrow: 4 }}>
+
         <div className={styles.titleRow}>
-          <p>$</p>
-          <p>{rightSideData.name}</p>
-          <button>Settings</button>
+          <TransactionModal data={{
+            requests: rightSideData.itemsToBePaid,
+            onPay: (passedRequests) => {console.log(passedRequests)}
+          }}/>
+          <p className="group-title">{rightSideData.name}</p>
+          <SettingsModal data={{
+            users: users
+          }}/>
         </div>
-        <div className="graph">
-          {Array.from(graphData.entries()).map((element) => (
-            <Bar
-              key={element[0].firstName + element[0].lastName + element[0].icon}
-              data={{
-                value: element[1] * 10,
-                owed: element[1],
-                user: element[0],
-              }}
-            />
-          ))}
+
+        <div className="graph" style={{height: 60 * Array.from(graphData.entries()).reduce((min, current) => current[1] < min[1] ? current : min)[1]}}>
+          {
+            Array.from(graphData.entries()).map(
+              (element) => (
+                <Bar key={element[0].firstName + element[0].lastName + element[0].icon} data={{
+                  value: element[1] * 10,
+                  owed: element[1],
+                  user: element[0]
+                }}/>
+              )
+            )
+          }
+
         </div>
         <div className="timeline">
           {rightSideData.itemsToBePaid.map((request) => (
