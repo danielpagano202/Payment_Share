@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@headlessui/react": "^2.2.1",
+    "animate.css": "^4.1.1",
+    "js-cookie": "^3.0.5",
     "next": "15.2.4",
     "pocketbase": "^0.25.2",
     "react": "^19.0.0",
