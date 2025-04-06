@@ -18,6 +18,7 @@ function TransactionModal(props) {
 
   // Handle selecting or deselecting requests
   const handleRequestSelect = (request) => {
+    console.log(request);
     setSelectedRequests((prevSelected) =>
       prevSelected.includes(request)
         ? prevSelected.filter((req) => req !== request)
@@ -28,6 +29,7 @@ function TransactionModal(props) {
   // Handle Pay button click
   const handlePay = () => {
     // Call the function passed from props to handle the payment
+    console.log(selectedRequests)
     props.data.onPay(selectedRequests);
     setSelectedRequests([]);
     closeModal(); // Reset after payment

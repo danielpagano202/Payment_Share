@@ -1,27 +1,27 @@
 "use client"
 import Image from "next/image";
 import styles from "./page.module.css";
+import React, { use } from 'react';
 import "./styles.css";
 import Bar from "./components/bar";
 import TimeLineCircle from "./components/timelineCircle";
-import { use } from "react";
 import Group from "./components/group";
 import MainUser from "./components/mainUser"
 import "./page.css"
 import Modal from "./components/modal";
-import { use } from "react";
-import Group from "./components/group";
-import MainUser from "./components/mainUser"
-import "./page.css"
-import Modal from "./components/modal";
-import React, { useState } from 'react';
 import SettingsModal from "./components/settingsModal";
 import TransactionModal from "./components/transactionModal";
+
+import PocketBase from 'pocketbase';
+
+const pb = new PocketBase('http://127.0.0.1:8090');
+
 class User{
-  constructor(firstName, lastName, icon){
+  constructor(firstName, lastName, icon, id = ""){
     this.firstName = firstName;
     this.lastName = lastName;
     this.icon = icon;
+    this.id = id;
   }
 }
 
@@ -80,8 +80,46 @@ let secondRequest = new RequestWithUsersToDo(
 )
 
 let rightSideData = new GroupData(
-  [exampleOwedRequest, secondRequest], "Friends"
+  [], "Friends"
 );
+
+
+const resultList = await pb.collection('Groups').getList(1, 50, {
+  filter: 'name = "Friends"',
+  expand: "users, transactions"
+});
+
+users = Array.from(resultList.items[0].expand.users).map(
+  (value) => {
+    return new User(value.firstName, value.lastName, value.icon, value.id)
+  }
+);
+
+let usersMap = new Map(
+  users.map((user) => [user.id, user])
+);
+
+let transactions = Array.from(resultList.items[0].expand.transactions).map(
+  (value) => {
+    return new RequestWithUsersToDo(
+      new PaymentRequest(
+        usersMap.get(value.user), value.amount, value.note, new Date(value.date)
+      ), Array.from(value.usersToPay).map(
+        (value) => {return usersMap.get(value)}
+      )
+    )
+  }
+);
+
+rightSideData = new GroupData(
+  transactions, "Friends"
+)
+
+
+
+
+
+
 
 
 function getAmountOwed(groupData, allUsers){
@@ -99,9 +137,8 @@ function getAmountOwed(groupData, allUsers){
   });
   return userTotals;
 }
-console.log()
 let graphData = getAmountOwed(rightSideData, users);
-
+let minHeight = 60 * Array.from(graphData.entries()).reduce((min, current) => current[1] < min[1] ? current : min)[1];
 
 export default function Home() {//name of the group, searching for member
   return (
@@ -133,12 +170,12 @@ export default function Home() {//name of the group, searching for member
             users: users
           }}/>
         </div>
-        <div className="graph" style={{height: 60 * Array.from(graphData.entries()).reduce((min, current) => current[1] < min[1] ? current : min)[1]}}>
+        <div className="graph" style={{height: minHeight < 400 ? 400 : minHeight}}>
           {
             Array.from(graphData.entries()).map(
               (element) => (
                 <Bar key={element[0].firstName + element[0].lastName + element[0].icon} data={{
-                  value: element[1] * 10,
+                  value: 5 + (element[1] * 10),
                   owed: element[1],
                   user: element[0]
                 }}/>
@@ -147,16 +184,24 @@ export default function Home() {//name of the group, searching for member
           }
         </div>
         <div className="timeline">
-          {rightSideData.itemsToBePaid.map(
-            (request) => (
-              <TimeLineCircle key={request.request.note + request.request.user.firstName + request.request.date.toString} data={{
-                request: request,
-                users: users
-              }}/>
-            )
-          )}
-          <div className="timeline-circle" style={{padding: "25px"}}>
-          </div>
+        {rightSideData.itemsToBePaid.map(
+              (request) => (
+                <TimeLineCircle key={request.request.note + request.request.user.firstName + request.request.date.toString} data={{
+                  request: request,
+                  users: users
+                }}/>
+              )
+            )}
+        {
+          rightSideData.itemsToBePaid.length != 0 ? 
+            <div className="timeline-circle" style={{padding: "25px"}}></div> : 
+            <div>
+              <p className="sectionTitle">
+                No payments made yet!
+              </p>
+            </div>
+        }
+          
         </div>
       </div>
       
