@@ -35,16 +35,18 @@ class PaymentRequest{
 }
 
 class RequestWithUsersToDo{
-  constructor(request, usersToPay){
+  constructor(request, usersToPay, id = ""){
     this.request = request;
     this.usersToPay = usersToPay;
+    this.id = id;
   }
 }
 
 class GroupData{
-  constructor(itemsToBePaid, name){
+  constructor(itemsToBePaid, name, id = ""){
     this.itemsToBePaid = itemsToBePaid;
     this.name = name;
+    this.id = id;
   }
 }
 
@@ -64,23 +66,8 @@ let exampleRequest = new PaymentRequest(
 
 
 
-let exampleOwedRequest = new RequestWithUsersToDo(
-  exampleRequest, [
-    users[1], users[3]
-  ]
-);
-
-let secondRequest = new RequestWithUsersToDo(
-  new PaymentRequest(
-    users[3], 20, "Got food", new Date(2025, 3, 4)
-  ),
-  [
-    users[0], users[2], users[1]
-  ]
-)
-
 let rightSideData = new GroupData(
-  [], "Friends"
+  [], "Friends", ""
 );
 
 
@@ -99,6 +86,8 @@ let usersMap = new Map(
   users.map((user) => [user.id, user])
 );
 
+let currentUser = users[0];
+
 let transactions = Array.from(resultList.items[0].expand.transactions).map(
   (value) => {
     return new RequestWithUsersToDo(
@@ -106,20 +95,15 @@ let transactions = Array.from(resultList.items[0].expand.transactions).map(
         usersMap.get(value.user), value.amount, value.note, new Date(value.date)
       ), Array.from(value.usersToPay).map(
         (value) => {return usersMap.get(value)}
-      )
+      ),
+      value.id
     )
   }
 );
 
 rightSideData = new GroupData(
-  transactions, "Friends"
+  transactions, "Friends", resultList.items[0].id
 )
-
-
-
-
-
-
 
 
 function getAmountOwed(groupData, allUsers){
@@ -139,7 +123,6 @@ function getAmountOwed(groupData, allUsers){
 }
 let graphData = getAmountOwed(rightSideData, users);
 let minHeight = 60 * Array.from(graphData.entries()).reduce((min, current) => current[1] < min[1] ? current : min)[1];
-
 export default function Home() {//name of the group, searching for member
   return (
     <div className={styles.main}>
@@ -162,8 +145,45 @@ export default function Home() {//name of the group, searching for member
       <div style={{flexGrow: 4}} className="scroll-section">
         <div className={styles.titleRow}>
           <TransactionModal data={{
-            requests: rightSideData.itemsToBePaid,
-            onPay: (passedRequests) => {console.log(passedRequests)}
+            requests: Array.from(rightSideData.itemsToBePaid).filter((value) => Array.from(value.usersToPay).includes(currentUser)),
+            onPay: (passedRequests) => {
+              console.log(currentUser);
+              const batch = pb.createBatch();
+              passedRequests.forEach(
+                (request) => {
+                 
+                  console.log(request);
+                  batch.collection("Transactions").update(
+                    request.id, {
+                      "usersToPay-": currentUser.id
+                    }
+                  )
+                }
+              );
+              batch.send();
+            },
+            onRequest: async (data)  => {
+              let transactionRecord = await pb.collection("Transactions").create(
+                {
+                  "note": data.request.note,
+                  "amount": data.request.amount,
+                  "date": data.request.date,
+                  "user": currentUser.id,
+                  "usersToPay": users.filter(
+                    (user) => user.id != currentUser.id
+                  ).map(
+                    (user) => user.id
+                  )
+                }
+              );
+
+              pb.collection("Groups").update(
+                rightSideData.id, {
+                  "transactions+" : transactionRecord.id
+                }
+              );
+
+            }
           }}/>
           <p className="group-title">{rightSideData.name}</p>
           <SettingsModal data={{
