@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image";
-import { useState } from "react";
+
 import styles from "./page.module.css";
 import "./styles.css";
 import Bar from "./components/bar";
@@ -12,12 +12,12 @@ import MainUser from "./components/mainUser";
 import "./page.css";
 import Modal from "./components/modal";
 
-import { use } from "react";
-import Group from "./components/group";
-import MainUser from "./components/mainUser"
-import "./page.css"
-import Modal from "./components/modal";
-import React, { useState } from 'react';
+
+
+
+
+
+import { useState } from "react";
 import SettingsModal from "./components/settingsModal";
 import TransactionModal from "./components/transactionModal";
 class User{
@@ -47,9 +47,10 @@ class RequestWithUsersToDo {
 class GroupData {
   constructor(itemsToBePaid, name) {
     this.itemsToBePaid = itemsToBePaid;
-    this.name = name;
+    this.name = name;//name of group
   }
 }
+
 
 let users = [
   new User("Aiden", "A", "https://api.dicebear.com/9.x/thumbs/svg?seed=Aiden"),
@@ -76,8 +77,12 @@ let secondRequest = new RequestWithUsersToDo(
   [users[0], users[2], users[1]]
 );
 
+/**
+ * RequestWithUsersToDo
+ * 
+ */
 let rightSideData = new GroupData(
-  [exampleOwedRequest, secondRequest],
+  [exampleOwedRequest, secondRequest],//first is the one who owed, second 
   "Friends"
 );
 
@@ -103,27 +108,32 @@ function getAmountOwed(groupData, allUsers) {
 console.log()
 let graphData = getAmountOwed(rightSideData, users);
 
-
-export default function Home() {
-  const [groupName, setGroupName] = useState("");
-  const [groupMembers, setGroupMembers] = useState();
-  const [groupsInfo, setGroupsInfo] = useState([]); //[[groupName, [member1, member2,...]]  ,...]
-
-  const postSubmitAction = (groupName, members) => {
-    // console.log("hello from parent");
-    setGroupName(groupName);
-    setGroupMembers(members);
-    setGroupsInfo((prevGroups) => [...prevGroups, [groupName, members]]);
-
-    // console.log(groupsInfo);
-
-    groupsInfo.map((group) => {
-      <Group name={group[0]} />;
-    });
-  };
+const changeGroup = () => {
+  
+  
+};
 
 
 export default function Home() {//name of the group, searching for member
+  const [groupName, setGroupName] = useState("");
+  const [groupMembers, setGroupMembers] = useState();
+  const [groupsInfo, setGroupsInfo] = useState([]); //[[groupName, [member1, member2,...]]  ,...]
+  
+  
+  const postSubmitAction = (groupName, members) => {
+    // console.log("hello from parent");
+
+    const newGroup = new GroupData([],groupName)
+    setGroupName(groupName);
+    setGroupMembers(members);
+    console.log("here:", newGroup)
+    setGroupsInfo((prevGroups) => [...prevGroups, {
+      groupData: newGroup,
+      members: members
+    }]);
+    console.log(newGroup)
+  };
+ 
   return (
     <div className={styles.main}>
 
@@ -131,12 +141,15 @@ export default function Home() {//name of the group, searching for member
         <MainUser name="Morpheus" />
         <Modal afterSubmit={postSubmitAction} />
 
-        {groupsInfo.map((group, index) => (
+        {groupsInfo.map((groupObj, index) => (
+          
           <Group
-            key={index} // Always use keys for list items
-            name={group[0]}
-            members={group[1]} // Pass members array to Group component
+            key={index} 
+            name={groupObj.groupData.name}
+            members={groupObj.members}
+            click ={changeGroup}
           />
+
         ))}
         
       </div>
