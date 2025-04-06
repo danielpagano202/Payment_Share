@@ -12,10 +12,13 @@ function formatDate(date) {
   }
 
 export default function TimeLineCircle(props) {
+    if(props.data.request.request.user == null){
+        return;
+    }
     return <div className="main-circle-group">
         <div className="timeline-title-row">
             <div className="timeline-circle">
-                <img className="timeline-avatar" src={props.data.request.request.user.icon} />
+                <img className="timeline-avatar" src={props.data.request.request.user != null ? props.data.request.request.user.icon : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" } />
             </div>
             <div className="timeline-title">
                 <p className="date-title">{formatDate(props.data.request.request.date)}</p>
