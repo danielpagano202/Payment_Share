@@ -50,14 +50,15 @@ function Modal({afterSubmit }) {
                 id="members"
                 name="members"
                 ref={membersRef}
-                required
               />
               <br />
               <br />
 
               <input
                 type="submit"
-                
+                // onClick={() => {
+                //   printMembers();
+                // }}
                 value="Submit"
               />
             </form>
