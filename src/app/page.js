@@ -62,12 +62,21 @@ export default function Home() {
     const newGroup = new GroupData([],groupTabName)
     setGroupTabName(groupTabName);
     setGroupMembers(members);
-    console.log("here:", newGroup)
+    
     setGroupsInfo((prevGroups) => [...prevGroups, {
       groupData: newGroup,
       members: members
     }]);
-    console.log(newGroup)
+    // console.log("groupsInfo:",groupsInfo)
+    // groupsInfo.map((groupObj, indexf)=>{
+    //   if(groupObj !== undefined){
+    //     console.log('groupObj',groubObj);
+    //   }
+    // })
+
+    //to access the groupData: groupsInfo.groupData
+     //to access the groupData: groupsInfo.members
+    
   };
 
   const [users, setUsers] = useState([]); // Start with an empty array for users
