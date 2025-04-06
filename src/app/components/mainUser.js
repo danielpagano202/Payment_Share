@@ -1,9 +1,10 @@
 import {React} from "react"
 import "./mainUser.css"
-function MainUser(props){//props should 
+function MainUser(props){
+    console.log(props);
     return(
         <div className="mainAccountBlock">
-            <div className = "userProfilePicture"></div>
+            <img src={props.avatar} className="userProfilePicture"/>
             <h3>{props.name}</h3>
         </div>
     )
